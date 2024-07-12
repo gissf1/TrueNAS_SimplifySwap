@@ -37,8 +37,39 @@ fatal() {
 }
 
 if ! grep -Eq '^/dev/dm-0 ' /proc/swaps ; then
-	fatal 1 "Unable to find any devicemapper swap active"
+	# try to activate existing inactive swap
+	echo "Unable to find active devicemapper swap; checking for inactive dm swap..."
+	if [ -d '/dev/md' ]; then
+		find /dev/md/ -type l \( -name 'swap[0-9]' -or -name '*:swap[0-9]' \) \
+		| while read -r MD_NAME ; do
+			echo -n "Found md swap device: $MD_NAME... "
+			if ! realpath -e "$MD_NAME" | grep -Eq '^/dev/md127$' ; then
+				echo "md swap device $MD_NAME is not md127"
+				continue
+			elif ! realpath -e "/dev/mapper/md127" | grep -Eq '^/dev/dm-0$' ; then
+				echo "devicemapper device md127 is not dm-0"
+				continue
+			elif ! file -s '/dev/dm-0' | grep -Eq '^/dev/dm-0: Linux swap file, ' ; then
+				echo "devicemapper device /dev/dm-0 is not formatted as swap"
+				continue
+			fi
+			echo -n "Attempting to activate... "
+			swapon /dev/dm-0
+			RET=$?
+			if [ $RET = 0 ]; then
+				echo "Success!"
+			else
+				echo "Failed with code $RET."
+			fi
+		done
+	fi
+	# if we don't have any swap, abort now
+	if ! grep -Eq '^/dev/dm-0 ' /proc/swaps ; then
+		echo "Unable to detect inactive devicemapper swap either"
+		fatal 1 "Unable to find any devicemapper swap"
+	fi
 fi
+
 echo "Found devicemapper device /dev/dm-0 active as swap"
 
 # build a full path to a temporary file
