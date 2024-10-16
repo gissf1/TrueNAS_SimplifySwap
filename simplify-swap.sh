@@ -192,13 +192,13 @@ while IFS="	" read DM_NAME DM_ZERO DM_BLOCKS DM_OPTIONS ; do
 	if [ "$MD_Raid_Level" != "raid1" ]; then
 		fatal 2 "unexpected md array raid level: $MD_Raid_Level"
 	fi
-	if [ "$MD_State" = "clean, resyncing" -o "$MD_State" = "clean, degraded, recovering" ]; then
+	if [ "$MD_State" = "clean, resyncing" -o "$MD_State" = "clean, degraded, recovering" -o "$MD_State" = "active, resyncing" ]; then
 		echo "md array state: $MD_State"
 		echo "Waiting for resync/recovery..."
 		DELAY=1
 		START=$SECONDS
 		LASTPERC=-1
-		while [ "$MD_State" = "clean, resyncing" -o "$MD_State" = "clean, degraded, recovering" ]; do
+		while [ "$MD_State" = "clean, resyncing" -o "$MD_State" = "clean, degraded, recovering" -o "$MD_State" = "active, resyncing" ]; do
 			sleep $DELAY
 			MD_State=$( mdadm --detail "$MD_DEVICE" | grep -E '^ *State : ' | sed -r 's#^ *State : +([^ ].*[^ ]) *$#\1#g ; t ; d' )
 			MD_Resync_Status=$( mdadm --detail "$MD_DEVICE" | grep -E '^ *Re(sync|build) Status : ' | sed -r 's#^ *Re(sync|build) Status : +([^ ].*[^ ]) *$#\2#g ; t ; d' )
