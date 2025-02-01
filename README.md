@@ -4,7 +4,7 @@
 
 By default, a TrueNAS Scale system uses mirrored encrypted swap space on each disk of the volume selected in the configuration.  This has been the default since at least 24.04 Dragonfish.  On older systems with low memory, the load of doing constant encryption for swap can make the system unstable and nearly unusable.  Furthermore, allowing striping (RAID0) instead of mirroring (RAID1) for swap should also significantly help swap performance, at the risk of system instability in the case of disk failure.
 
-This implementation is a rather simple script that checks if the default swap configuration is active, and, if so, live-replaces it without downtime to remove encryption and use the kernel's default RAID0 swap.  This would need to be done on each startup since the startup scripts in TrueNAS Scale rebuild the swap configuration during boot if it isn't in the expected configuration.  So the solution is to simply add a startup script in TrueNAS Scale's UI to call this script on startup to correct it later in the boot process.
+This implementation is a conceptually simple script that checks if the default swap configuration is active, and, if so, live-replaces it without downtime to remove encryption and instead use the kernel's default RAID0 swap capability.  This would need to be done on each startup since the startup scripts in TrueNAS Scale rebuild the swap configuration during boot if it isn't in the expected configuration.  So the solution is to simply add a startup script in TrueNAS Scale's UI to call this script on startup to correct it later in the boot process.
 
 ### Setup
 
@@ -25,13 +25,15 @@ The setup for this is quite simple:
     | Timeout             | `90` You can adjust this if necessary                    |
 
     - **Command**:
-      - The `simplify-swap.sh` script does not support any command line options, but it can be used interactively via ssh and provide some output to know what is happening or if something is going wrong in the process.  Typically this output is lost when run at PostInit, but you can force TrueNAS to retain the information by changing the command to something like the following:
+      - The `simplify-swap.sh` script does not support any command line options, but it can be used interactively via ssh to provide some output describing what is happening and indicating if something is going wrong in the process.
+
+      - Typically, output from CLI commands or scripts run this way are not logged, and therefore the output is lost.  You can retain the information and messages by changing the `command` field to something like the following:
 
         `/path/to/your/TrueNAS_SimplifySwap/simplify-swap.sh >> /root/simplify-swap.stdout 2>> /root/simplify-swap.stderr`
 
-      This would save output into files `/root/simplify-swap.stdout` and `/root/simplify-swap.stderr` to hopefully help with debugging.
+        This would save output into files `/root/simplify-swap.stdout` and `/root/simplify-swap.stderr` to hopefully help with debugging.
 
-      Don't forget to change it back and delete the files afterwards since the files will grow indefinitely on each boot.
+        These output files will grow on each system bootup and will never be rotated or removed without manual intervention, so when you finish debugging, make sure to restore the `command` field and delete the output files.
 
     - **Enabled**:
       - Check this to enable the script at startup
