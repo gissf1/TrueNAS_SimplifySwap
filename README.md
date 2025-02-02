@@ -27,6 +27,8 @@ The setup for this is quite simple:
     - **Command**:
       - The `simplify-swap.sh` script does not support any command line options, but it can be used interactively via ssh to provide some output describing what is happening and indicating if something is going wrong in the process.
 
+      - The included `activate-simple-swap.sh` script is much simpler; it just activates any existing swap partitions, identified by the standard GPT 'partition type' ID.  Depending on your system configuration, this script may be useful.  Similarly, it does not need any command line options, and can be used interactively via ssh to provide some output describing what is happening and indicating if something is going wrong in the process.
+
       - Typically, output from CLI commands or scripts run this way are not logged, and therefore the output is lost.  You can retain the information and messages by changing the `command` field to something like the following:
 
         `/path/to/your/TrueNAS_SimplifySwap/simplify-swap.sh >> /root/simplify-swap.stdout 2>> /root/simplify-swap.stderr`
@@ -39,7 +41,7 @@ The setup for this is quite simple:
 
           `/path/to/your/shlogger -o /path/to/your/simplify-swap.log -s 10485760 /path/to/your/TrueNAS_SimplifySwap/simplify-swap.sh`
 
-        You can use these logging methods to enable output logging for this script (or other commands) by substituting the appropriate script name in the command line.
+        You can use these logging methods to enable output logging for either script (or other commands) by substituting the appropriate script name in the command line.
 
     - **Enabled**:
       - Check this to enable the script at startup
