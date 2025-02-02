@@ -48,3 +48,17 @@ The setup for this is quite simple:
       - Also an easy way to disable if issues arise
 
 6. Click the `Save` button
+
+## Issues / Technical Support
+
+You can report issues or request support using Github issues at https://github.com/gissf1/TrueNAS_SimplifySwap/issues
+
+## Development Contribution
+
+If this was extremely useful to you, and you're feeling generous, please feel free to donate on my github page at https://github.com/sponsors/gissf1
+
+Also consider contacting me with business opportunities, especially if you would like to sponsor changes to this project, or wish to offer other collaboration or contracting opportunities.
+
+## Licensing
+
+All files in this project are covered under the license described in the LICENSE file.  If they do not have a file header, this license applies by default as if it had the appropriate header.
