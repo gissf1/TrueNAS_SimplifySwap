@@ -35,6 +35,12 @@ The setup for this is quite simple:
 
         These output files will grow on each system bootup and will never be rotated or removed without manual intervention, so when you finish debugging, make sure to restore the `command` field and delete the output files.
 
+        Alternatively, you can check out my shLogger project, which does much of the hard work of managing a log file: https://github.com/gissf1/shlogger/ and it would work like this:
+
+          `/path/to/your/shlogger -o /path/to/your/simplify-swap.log -s 10485760 /path/to/your/TrueNAS_SimplifySwap/simplify-swap.sh`
+
+        You can use these logging methods to enable output logging for this script (or other commands) by substituting the appropriate script name in the command line.
+
     - **Enabled**:
       - Check this to enable the script at startup
       - Also an easy way to disable if issues arise
